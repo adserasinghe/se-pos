@@ -79,13 +79,14 @@ if (isset($_SESSION['cart'])) {
 <html lang="en">
 <head>
     <meta charset="UTF-8">
-    <title>POS System with Database</title>
+    <title>Se POS</title>
+    <link rel="icon" type="image/x-icon" href="./images/favicon.png">
     <meta name="viewport" content="width=device-width,initial-scale=1.0">
     <link rel="stylesheet" href="style.css">
 </head>
 <body>
 <div class="container">
-    <h1>POS System</h1>
+    <h1>Se POS System</h1>
     <div class="flex-row">
         <div class="panel">
             <h2>Add Product</h2>
