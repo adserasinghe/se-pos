@@ -1,31 +1,88 @@
+body {
+    font-family: Arial, sans-serif;
+    margin: 0; padding: 0;
+    background: #f0f0f0;
+}
 .container {
-  max-width: 800px;
-  margin: 40px auto;
-  padding: 20px;
-  background-color: #f9f9f9;
-  border: 1px solid #ddd;
-  box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+    max-width: 900px;
+    margin: 30px auto;
+    background: #fff;
+    border-radius: 10px;
+    box-shadow: 0 2px 12px #0001;
+    padding: 25px;
 }
-
-.product-form, .product-list, .billing-form {
-  margin-bottom: 40px;
+h1 { text-align: center; }
+.flex-row {
+    display: flex;
+    gap: 30px;
+    flex-wrap: wrap;
+    justify-content: center;
 }
-
-table {
-  width: 100%;
-  border-collapse: collapse;
+.panel {
+    flex: 1 1 300px;
+    min-width: 280px;
+    background: #fafafa;
+    margin: 10px 0;
+    border-radius: 8px;
+    padding: 20px;
+    box-sizing: border-box;
+    box-shadow: 0 1px 6px #0002;
 }
-
-th, td {
-  border: 1px solid #ddd;
-  padding: 10px;
-  text-align: left;
+.form {
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
 }
-
-th {
-  background-color: #f0f0f0;
+input[type="text"], input[type="number"] {
+    padding: 7px;
+    font-size: 1em;
+    border: 1px solid #ccc;
+    border-radius: 4px;
 }
-
-.cart {
-  margin-top: 20px;
+button {
+    background: #007bff;
+    color: #fff;
+    border: none;
+    padding: 7px 15px;
+    border-radius: 4px;
+    cursor: pointer;
+    font-size: 1em;
+    margin-top: 8px;
+    transition: background 0.2s;
+}
+button:disabled {
+    background: #ccc;
+    cursor: not-allowed;
+}
+button:hover:not(:disabled) {
+    background: #0056b3;
+}
+ul {
+    list-style: none;
+    padding: 0;
+    margin: 0 0 10px 0;
+}
+li {
+    margin-bottom: 8px;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+}
+.total {
+    font-weight: bold;
+    margin-top: 10px;
+    font-size: 1.2em;
+}
+.success {
+    color: #2d7a2d;
+    margin-top: 10px;
+    font-weight: bold;
+}
+@media (max-width: 700px) {
+    .flex-row {
+        flex-direction: column;
+    }
+    .panel {
+        min-width: unset;
+    }
 }
