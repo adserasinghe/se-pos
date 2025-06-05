@@ -32,7 +32,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['add_to_cart'])) {
 // Checkout and save bill
 if (isset($_GET['bill']) && isset($_SESSION['cart']) && count($_SESSION['cart'])) {
     $conn->begin_transaction();
-    $conn->query("INSERT INTO bills DEFAULT VALUES");
+    $conn->query("INSERT INTO bills () VALUES ()");
     $bill_id = $conn->insert_id;
     $stmt = $conn->prepare("INSERT INTO bill_items (bill_id, product_id, quantity) VALUES (?, ?, ?)");
     foreach ($_SESSION['cart'] as $pid => $qty) {
@@ -41,6 +41,7 @@ if (isset($_GET['bill']) && isset($_SESSION['cart']) && count($_SESSION['cart'])
     }
     $stmt->close();
     $conn->commit();
+    $_SESSION['latest_bill_id'] = $bill_id;
     $_SESSION['cart'] = [];
     header("Location: index.php?billed=1");
     exit();
@@ -74,14 +75,40 @@ if (isset($_SESSION['cart'])) {
         $stmt->close();
     }
 }
+
+// Latest bill details for download
+$bill_download = [];
+$bill_total = 0;
+if (isset($_SESSION['latest_bill_id']) && isset($_GET['billed'])) {
+    $bill_id = $_SESSION['latest_bill_id'];
+    $stmt = $conn->prepare(
+        "SELECT p.name, p.price, bi.quantity
+        FROM bill_items bi
+        JOIN products p ON bi.product_id = p.id
+        WHERE bi.bill_id = ?"
+    );
+    $stmt->bind_param("i", $bill_id);
+    $stmt->execute();
+    $stmt->bind_result($pname, $pprice, $pqty);
+    while ($stmt->fetch()) {
+        $bill_download[] = [
+            "name" => $pname,
+            "price" => $pprice,
+            "qty" => $pqty,
+            "subtotal" => $pprice * $pqty
+        ];
+        $bill_total += $pprice * $pqty;
+    }
+    $stmt->close();
+}
 ?>
 <!DOCTYPE html>
 <html lang="en">
 <head>
     <meta charset="UTF-8">
-    <title>Se POS</title>
-    <link rel="icon" type="image/x-icon" href="./images/favicon.png">
+    <title>Se POS System </title>
     <meta name="viewport" content="width=device-width,initial-scale=1.0">
+    <link rel="icon" type="image/x-icon" href="./images/favicon.png">
     <link rel="stylesheet" href="style.css">
 </head>
 <body>
@@ -130,10 +157,17 @@ if (isset($_SESSION['cart'])) {
                 <button type="submit" name="bill" <?= !count($cart_details) ? 'disabled' : '' ?>>Bill/Checkout</button>
             </form>
             <?php if (isset($_GET['billed'])): ?>
-                <div class="success">Bill completed!</div>
+                <div class="success">
+                    Bill completed! 
+                    <a href="generate_bill.php?type=txt" target="_blank">Download as TXT</a> | 
+                    <a href="generate_bill.php?type=pdf" target="_blank">Download as PDF</a>
+                </div>
             <?php endif; ?>
         </div>
     </div>
 </div>
+<footer style="text-align:center; margin-top:2em; color:#888;">
+    &copy; <?= date('Y') ?> Se-POS System by <a style="text-decoration:none; color:black; font-weight:bold;" target="_blank" href="https://adserasinghe.github.io">Aditha Dinuja Serasinghe</a> All rights reserved.
+</footer>
 </body>
 </html>
